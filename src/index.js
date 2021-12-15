@@ -1,5 +1,5 @@
 import './sass/_commons.scss';
-import  NewsApiServises  from "./news-servises";
+import  {NewApiServises} from './assyncNews-servises.js';
 import oneCard from './handlbar/oneCard.hbs';
 import gallery from "./handlbar/gallery.hbs";
 import Notiflix from 'notiflix';
@@ -12,48 +12,9 @@ const refs = {
     // loadMore: document.querySelector('[data-action="load-more"]'),
     infoArticle:document.querySelector('.article-info')
 }
-const loadMoreBtn = new LoadMoreBtn(
-    {
-        selector: '[data-action="load-more"]',
-        hidden: true,
-    }
-   
-);
-console.log(loadMoreBtn)
-refs.searchForm.addEventListener('submit', onSearch);
-loadMoreBtn.refs.button.addEventListener('click', onLoadMore);
 
+const newApiServises = new NewApiServises();
 
-const newApiServises = new NewsApiServises();
-
-
-
-function onSearch(evt) {
-evt.preventDefault();
-clearArticlesContainer();
-newApiServises.query = evt.currentTarget.elements.searchQuery.value;
-   
-loadMoreBtn.show()
-loadMoreBtn.disabled()
-
- if (newApiServises.query === '') {
-   Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.")
-   return;
- };
-
-    newApiServises.resetPage();
-    newApiServises.fetchArticles().then(appendHits);
-    loadMoreBtn.enable();
-};
- 
-function onLoadMore() {
-    loadMoreBtn.disabled()
-    newApiServises.fetchArticles().then(hits => {
-    appendHits(hits);
-    loadMoreBtn.enable();
-    });
-  
-}
 function appendHits(hits) {
     refs.imageContainer.insertAdjacentHTML('beforeend', gallery(hits))
     
@@ -61,14 +22,52 @@ function appendHits(hits) {
         Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
         loadMoreBtn.hide()
 }
-    }
+};
 
-// function onSucsses(hits) {
-//     console.log('eto then');
-//     const markupList =gallery(hits);
-//   const markupOneCountries = oneCard(hits);
-//   refs.imageContainer.innerHTML = markupList;
-// }
+
+function onSearch(evt) {
+evt.preventDefault();
+clearArticlesContainer();
+newApiServises.query =evt.currentTarget.elements.searchQuery.value;//e.target[0].value; 
+   
+loadMoreBtn.show()
+loadMoreBtn.disabled()
+
+    try {
+        if (newApiServises.query === '') {
+            return Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.')
+        };
+    
+    newApiServises.resetPage();
+   evt.currentTarget.elements.searchQuery.value = '';
+
+   newApiServises.fetch().then(appendHits);
+   }catch (error) {
+    console.error(error);
+  };
+
+    loadMoreBtn.enable();
+};
+
+const loadMoreBtn = new LoadMoreBtn(
+    {
+        selector: '[data-action="load-more"]',
+        hidden: true,
+    }
+);
+console.log(loadMoreBtn)
+refs.searchForm.addEventListener('submit', onSearch);
+loadMoreBtn.refs.button.addEventListener('click', onLoadMore);
+ 
+function onLoadMore() {
+    loadMoreBtn.disabled()
+    newApiServises.fetch().then(hits => {
+    appendHits(hits);
+    loadMoreBtn.enable();
+    });
+  
+}
+
 function clearArticlesContainer() {
     refs.imageContainer.innerHTML = ' ';
 }

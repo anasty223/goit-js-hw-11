@@ -1,10 +1,9 @@
 
 {{#each this}}
 <div class="photo-card">
-    {{!-- <img src="{{webformatURL}}" alt="{{tags}}" loading="lazy"  class="img" /> --}}
-    <a href={{largeImageURL}}>
-        <img src="{{webformatURL}}" alt="{{tags}}" loading="lazy"  class="img"/>
-    </a>
+<a href={{largeImageURL}}>
+    <img src="{{webformatURL}}" alt="{{tags}}" loading="lazy" />
+</a>
     <div class="info">
         <p class="info-item">
             <b>Likes: </b>
@@ -22,16 +21,3 @@
 </div>
 {{/each}}
 
-
-{{!-- {{#each this}}
-<li class="name-coutry"> <img src="{{flags.png}}" alt="flags" width="60" class="contry-img">
-    <b class="contry-name">{{name}}</b>
-</li>
-<p> <b>Capital:</b> {{capital}}</p>
-<p> <b>Population:</b> {{population}}</p>
-<p> <b>Languages:</b>
-    {{#each languages}}
-    {{name}}
-    {{/each}}
-</p>
-{{/each}} --}}
